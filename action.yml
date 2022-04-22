@@ -1,0 +1,51 @@
+name: ReturnNames
+description: 'Take info from repo and make useable names from it.'
+inputs:
+  GithubRepo:
+    description: 'github.repository'
+    required: false
+    default: "${{ github.repository }}"   
+  
+outputs:
+  RepoName: 
+    description: 'Name of the Repo'
+    value: "${{ steps.RepoName.outputs._1 }}"
+  SolutionName: 
+    description: 'Name of the Solution'
+    value:  "${{ steps.RepoName.outputs._1 }}.sln"
+  PathToPackage: 
+    description: 'Path to the nupkg'
+    #value:  "${{ steps.RepoName.outputs._1 }}/bin/${{ env.BUILD_CONFIG }}/${{ steps.RepoName.Outputs._1 }}.${{ steps.get-version.outputs.version }}.nupkg"
+    value:  "${{ steps.RepoName.outputs._1 }}/Path"
+
+runs:
+  using: "composite"
+
+  steps:
+  - uses: actions/checkout@v3
+  
+  - name: Setup NuGet
+    uses: NuGet/setup-nuget@v1.0.5
+
+  - name: Restore dependencies
+    run: nuget restore $SOLUTION
+
+  - name: Setup .NET
+    uses: actions/setup-dotnet@v2
+    with:
+      dotnet-version: 5.0.x
+
+  - name: Add Github Source
+    run: dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.actor }}/index.json"
+
+  - name: Build
+    run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore
+
+  - name: Pack
+    id: PackForNuget
+    run: dotnet pack --configuration $BUILD_CONFIG 
+
+
+  - name: Put To Nuget
+    #run: dotnet nuget push "AVG.Common/bin/Release/AVG.Common.${{steps.get-version.outputs.version}}.nupkg" --api-key $NUGETTOKEN --source "github"
+    run: dotnet nuget push "$PACKAGEPATH" --api-key $NUGETTOKEN --source "github"
