@@ -34,7 +34,8 @@ runs:
 
   - name: Restore dependencies
     run: nuget restore ${{ inputs.SolutionName }}
-
+    shell: bash
+    
   - name: Setup .NET
     uses: actions/setup-dotnet@v2
     with:
@@ -42,14 +43,17 @@ runs:
 
   - name: Add Github Source
     run: dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ inputs.Owner }}/index.json"
-
+    shell: bash
+    
   - name: Build
     run: dotnet build ${{ inputs.SolutionName }} --configuration ${{ inputs.BuildSolutionType }} --no-restore
+    shell: bash
 
   - name: Pack
     id: PackForNuget
     run: dotnet pack --configuration ${{ inputs.BuildSolutionType }} 
-
+    shell: bash
 
   - name: Put To Nuget
     run: dotnet nuget push "${{ inputs.PathToPackage }}" --api-key $NUGETTOKEN --source "github"
+    shell: bash
