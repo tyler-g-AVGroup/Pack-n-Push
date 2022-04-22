@@ -9,7 +9,8 @@ inputs:
     required: true
   PathToPackage: 
     description: 'Path to the nupkg'
-    required: true
+    required: false
+    default: 'unknown'
   Owner: 
     description: 'Owner of the Repo. Both user and org are valid.'
     required: true
@@ -24,6 +25,7 @@ inputs:
   Password:
     desciption: 'Password for github. Typically $ {{ secrets.GITHUB_TOKEN }}.'
     required: true
+  NugetTkn
   
 #outputs:
 #  RepoName: 
@@ -39,28 +41,42 @@ runs:
   - name: Setup NuGet
     uses: NuGet/setup-nuget@v1.0.5
 
-#  - name: Restore dependencies
-#    run: nuget restore ${{ inputs.SolutionName }}
-#    shell: bash
+  - name: Restore dependencies
+    run: nuget restore ${{ inputs.SolutionName }}
+    shell: bash
     
   - name: Setup .NET
     uses: actions/setup-dotnet@v2
     with:
       dotnet-version: 5.0.x
 
-#  - name: Add Github Source
-#    run: dotnet nuget add source --username ${{ inputs.User }} --password ${{ inputs.Password }} --store-password-in-clear-text --name NUGETgithub "https://nuget.pkg.github.com/${{ inputs.Owner }}/index.json"
-#    shell: bash
+  - name: Add Github Source
+    run: dotnet nuget add source --username ${{ inputs.User }} --password ${{ inputs.Password }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ inputs.Owner }}/index.json"
+    shell: bash
     
-#  - name: Build
-#    run: dotnet build ${{ inputs.SolutionName }} --configuration ${{ inputs.BuildSolutionType }} --no-restore
-#    shell: bash
-
+  - name: Build
+    run: dotnet build ${{ inputs.SolutionName }} --configuration ${{ inputs.BuildSolutionType }} --no-restore
+    shell: bash
+    
   - name: Pack
     id: PackForNuget
     run: dotnet pack --configuration ${{ inputs.BuildSolutionType }} 
     shell: bash
 
-  - name: Put To Nuget
-    run: dotnet nuget push "${{ inputs.PathToPackage }}" --api-key $NUGETTOKEN --source "NUGETgithub"
+  - name: Find nupkg
+    id: Find-nupkg
+    uses: DovnarAlexander/github-action-file-detection@master
+    with:
+      wildcard: '*.nupkg'
+
+  - name: Check 
+
+  - name: Put To Nuget - from path input
+    if: inputs.PathToPackage != 'unknown'
+    run: dotnet nuget push "${{ inputs.PathToPackage }}" --api-key ${{ inputs.NugetTkn }} --source "github"
+    shell: bash
+
+  - name: Put To Nuget - from found nupkg
+    if: inputs.PathToPackage == 'unknown'
+    run: dotnet nuget push "${{ steps.Find-nupkg.outputs.found }}" --api-key ${{ inputs.NugetTkn }} --source "github"
     shell: bash
