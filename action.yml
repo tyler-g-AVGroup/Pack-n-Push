@@ -39,9 +39,9 @@ runs:
   - name: Setup NuGet
     uses: NuGet/setup-nuget@v1.0.5
 
-  - name: Restore dependencies
-    run: nuget restore ${{ inputs.SolutionName }}
-    shell: bash
+#  - name: Restore dependencies
+#    run: nuget restore ${{ inputs.SolutionName }}
+#    shell: bash
     
   - name: Setup .NET
     uses: actions/setup-dotnet@v2
