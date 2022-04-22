@@ -25,7 +25,9 @@ inputs:
   Password:
     desciption: 'Password for github. Typically $ {{ secrets.GITHUB_TOKEN }}.'
     required: true
-  NugetTkn
+  NugetTkn:
+    desciption: 'Personal Access Token from Github with package permissions'
+    required: true
   
 #outputs:
 #  RepoName: 
