@@ -71,8 +71,6 @@ runs:
     with:
       wildcard: '*.nupkg'
 
-  - name: Check 
-
   - name: Put To Nuget - from path input
     if: inputs.PathToPackage != 'unknown'
     run: dotnet nuget push "${{ inputs.PathToPackage }}" --api-key ${{ inputs.NugetTkn }} --source "github"
