@@ -49,7 +49,7 @@ runs:
       dotnet-version: 5.0.x
 
   - name: Add Github Source
-    run: dotnet nuget add source --username ${{ inputs.User }} --password ${{ inputs.Password }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ inputs.Owner }}/index.json"
+    run: dotnet nuget add source --username ${{ inputs.User }} --password ${{ inputs.Password }} --store-password-in-clear-text --name NUGETgithub "https://nuget.pkg.github.com/${{ inputs.Owner }}/index.json"
     shell: bash
     
 #  - name: Build
@@ -62,5 +62,5 @@ runs:
     shell: bash
 
   - name: Put To Nuget
-    run: dotnet nuget push "${{ inputs.PathToPackage }}" --api-key $NUGETTOKEN --source "github"
+    run: dotnet nuget push "${{ inputs.PathToPackage }}" --api-key $NUGETTOKEN --source "NUGETgithub"
     shell: bash
