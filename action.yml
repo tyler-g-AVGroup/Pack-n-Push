@@ -48,9 +48,9 @@ runs:
     with:
       dotnet-version: 5.0.x
 
-  - name: Add Github Source
-    run: dotnet nuget add source --username ${{ inputs.User }} --password ${{ inputs.Password }} --store-password-in-clear-text --name NUGETgithub "https://nuget.pkg.github.com/${{ inputs.Owner }}/index.json"
-    shell: bash
+#  - name: Add Github Source
+#    run: dotnet nuget add source --username ${{ inputs.User }} --password ${{ inputs.Password }} --store-password-in-clear-text --name NUGETgithub "https://nuget.pkg.github.com/${{ inputs.Owner }}/index.json"
+#    shell: bash
     
 #  - name: Build
 #    run: dotnet build ${{ inputs.SolutionName }} --configuration ${{ inputs.BuildSolutionType }} --no-restore
