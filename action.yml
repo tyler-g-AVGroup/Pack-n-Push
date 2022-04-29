@@ -46,6 +46,11 @@ runs:
   - name: Setup NuGet
     uses: NuGet/setup-nuget@v1.0.5
     
+  - name: Setup .NET
+    uses: actions/setup-dotnet@v2
+    with:
+      dotnet-version: 5.0.x
+    
   - name: Add Github Source
     run: dotnet nuget add source --username ${{ inputs.User }} --password ${{ inputs.Password }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ inputs.Owner }}/index.json"
     shell: bash
@@ -53,11 +58,6 @@ runs:
   - name: Restore dependencies
     run: nuget restore ${{ inputs.SolutionName }}
     shell: bash
-    
-  - name: Setup .NET
-    uses: actions/setup-dotnet@v2
-    with:
-      dotnet-version: 5.0.x
     
   - name: Build
     run: dotnet build ${{ inputs.SolutionName }} --configuration ${{ inputs.BuildSolutionType }} --no-restore
