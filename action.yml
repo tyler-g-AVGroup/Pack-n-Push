@@ -4,6 +4,9 @@ inputs:
   RepoName: 
     description: 'Name of the Repo'
     required: true
+  Version:
+    description: 'Version Number'
+    required: false
   SolutionName: 
     description: 'Name of the Solution'
     required: true
